@@ -54,15 +54,15 @@ class App extends React.Component {
         var ax=[],ay=[],az=[],rx=[],ry=[],rz=[],mx=[],my=[],mz=[]
         var x1=[],x2=[],x3=[],x9=[],x4=[],x5=[],x6=[],x7=[],x8=[]
         for(let i=0;i<d.length;i++){
-          ax.push({"y":d[i]["Accl in X-Axis"],"label":""+i})
-          ay.push({"y":d[i]["Accl in Y-Axis"],"label":""+i})
-          az.push({"y":d[i]["Accl in Z-Axis"],"label":""+i})
-          rx.push({"y":d[i]["Rot in X-Axis"],"label":""+i})
-          ry.push({"y":d[i]["Rot in Y-Axis"],"label":""+i})
-          rz.push({"y":d[i]["Rot in Z-Axis"],"label":""+i})
-          mx.push({"y":d[i]["Mag field in X-Axis"],"label":""+i})
-          my.push({"y":d[i]["Mag field in Y-Axis"],"label":""+i})
-          mz.push({"y":d[i]["Mag filed in Z-Axis"],"label":""+i})
+          ax.push({"y":d[i]["Accl in X-Axis"]})
+          ay.push({"y":d[i]["Accl in Y-Axis"]})
+          az.push({"y":d[i]["Accl in Z-Axis"]})
+          rx.push({"y":d[i]["Rot in X-Axis"]})
+          ry.push({"y":d[i]["Rot in Y-Axis"]})
+          rz.push({"y":d[i]["Rot in Z-Axis"]})
+          mx.push({"y":d[i]["Mag field in X-Axis"]})
+          my.push({"y":d[i]["Mag field in Y-Axis"]})
+          mz.push({"y":d[i]["Mag filed in Z-Axis"]})
           x1.push(d[i]["Accl in X-Axis"])
           x2.push(d[i]["Accl in Y-Axis"])
           x3.push(d[i]["Accl in Z-Axis"])
@@ -74,9 +74,33 @@ class App extends React.Component {
           x9.push(d[i]["Mag filed in Z-Axis"])
         }
         var obj = this.state.arr
+        var objKeys = Object.keys(this.state.arr)
         var obj1 = this.state.d3
-        obj[fileName.substring(0,(fileName.length-4))] = [ax,ay,az,rx,ry,rz,mx,my,mz]
-        obj1[fileName.substring(0,(fileName.length-4))] = [x1,x2,x3,x4,x5,x6,x7,x8,x9]
+        var files = ['heat_standing','heat_sitting','standing','sitting','rumination_standing','rumination_sitting']
+        if(objKeys.length>0){
+          var flag = true;
+          for(let i=0;i<objKeys.length;i++){
+            // console.log(objKeys[i].toLowerCase());
+            console.log(fileName.substring(0,fileName.length-6));
+            if((objKeys[i].toLowerCase()) === (fileName.substring(0,fileName.length-6))){
+              
+              var temp = this.concat(obj,obj1,objKeys[i],ax,ay,az,rx,ry,rz,mx,my,mz,x1,x2,x3,x4,x5,x6,x7,x8,x9)
+              obj = temp[0]
+              obj1 = temp[1]
+              flag = false
+              break;
+              // obj1[fileName.substring(0,(fileName.length-4))].push(x1,x2,x3,x4,x5,x6,x7,x8,x9)
+            }
+          }
+          if(flag){
+            obj[fileName.substring(0,(fileName.length-6))] = [ax,ay,az,rx,ry,rz,mx,my,mz]
+            obj1[fileName.substring(0,(fileName.length-6))] = [x1,x2,x3,x4,x5,x6,x7,x8,x9]
+          }
+        }
+        else{
+          obj[fileName.substring(0,(fileName.length-6))] = [ax,ay,az,rx,ry,rz,mx,my,mz]
+          obj1[fileName.substring(0,(fileName.length-6))] = [x1,x2,x3,x4,x5,x6,x7,x8,x9]
+        }
         this.setState({arr:obj,d3:obj1},()=>{
           var options = [];
           var keys = Object.keys(this.state.arr)
@@ -87,7 +111,6 @@ class App extends React.Component {
             for(let i=0;i<9;i++){
               var data = [];
               for(let j=0;j<keys.length;j++){
-                console.log(keys[j]);
                 data.push({
                     type: "spline",
                     name: keys[j].substring(0,(keys[j].length-1)),
@@ -155,6 +178,29 @@ class App extends React.Component {
           this.setState({t_option: [<CanvasJSStockChart key={0} options = {options[0]} />,<CanvasJSStockChart key={1} options = {options[1]} />,<CanvasJSStockChart key={2} options = {options[2]} />,<CanvasJSStockChart key={3} options = {options[3]} />,<CanvasJSStockChart key={4} options = {options[4]} />,<CanvasJSStockChart key={5} options = {options[5]} />,<CanvasJSStockChart key={6} options = {options[6]} />,<CanvasJSStockChart key={7} options = {options[7]} />,<CanvasJSStockChart key={8} options = {options[8]} />]})
          })
       })
+    }
+    concat = (obj,obj1,name,ax,ay,az,rx,ry,rz,mx,my,mz,x1,x2,x3,x4,x5,x6,x7,x8,x9) =>{
+
+      obj[name][0]=obj[name][0].concat(ax)
+      obj[name][1]=obj[name][1].concat(ay)
+      obj[name][2]=obj[name][2].concat(az)
+      obj[name][3]=obj[name][3].concat(rx)
+      obj[name][4]=obj[name][4].concat(ry)
+      obj[name][5]=obj[name][5].concat(rz)
+      obj[name][6]=obj[name][6].concat(mx)
+      obj[name][7]=obj[name][7].concat(my)
+      obj[name][7]=obj[name][8].concat(mz)
+      obj1[name][0]=obj1[name][0].concat(x1)
+      obj1[name][1]=obj1[name][1].concat(x2)
+      obj1[name][2]=obj1[name][2].concat(x3)
+      obj1[name][3]=obj1[name][3].concat(x4)
+      obj1[name][4]=obj1[name][4].concat(x5)
+      obj1[name][5]=obj1[name][5].concat(x6)
+      obj1[name][6]=obj1[name][6].concat(x7)
+      obj1[name][7]=obj1[name][7].concat(x8)
+      obj1[name][7]=obj1[name][8].concat(x9)
+
+      return [obj,obj1]
     }
     handleChange1 = (e, { name, value }) => {
       var data = [];
@@ -329,29 +375,13 @@ class App extends React.Component {
              */}
              {this.state.t_option[this.state.index]}
           </Grid.Row>
-          <Grid.Row>
-          <Dropdown 
-            placeholder='Rotation' 
-            search 
-            selection 
-            options={acclOptions.slice(3,6)}
-            name="rot"
-            onChange={this.handleChange1}  />
-          </Grid.Row>
-          <Grid.Row  style={{marginTop:'-5%'}}>
+          
+          <Grid.Row  >
               {this.state.t_option[this.state.index+1]}
           </Grid.Row>
           
-          <Grid.Row>
-          <Dropdown 
-            placeholder='Mag Field' 
-            search 
-            selection 
-            options={acclOptions.slice(6,9)}
-            name="mag"
-            onChange={this.handleChange1}  />
-          </Grid.Row>
-          <Grid.Row style={{marginTop:'-5%'}}>
+          
+          <Grid.Row >
               {this.state.t_option[this.state.index+2]}
           </Grid.Row>
           
